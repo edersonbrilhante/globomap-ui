@@ -18,13 +18,14 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import Header from './Header';
 import SearchContent from './SearchContent';
+import Pagination from './Pagination';
 import Stage from './Stage';
 import Info from './Info';
 import { traverseItems, uuid, sortByName } from '../utils';
 import './css/App.css';
 
 function uiSocket() {
-  return io();
+  return io('http://localhost:8888');
 }
 
 class App extends Component {
@@ -67,6 +68,8 @@ class App extends Component {
                        setCurrent={this.setCurrent}
                        addNodeToStage={this.addNodeToStage}
                        currentNode={this.state.currentNode} />
+
+        <Pagination />
 
         <Stage graphs={this.state.graphs}
                stageNodes={this.state.stageNodes}
@@ -190,7 +193,7 @@ class App extends Component {
     return this.setState({ stageNodes: [] });
   }
 
-  findNodes(query, co) {
+  findNodes(query, co, count, pageNumber) {
     if(co !== undefined && !co instanceof Array)  {
       console.log('The 2nd argument must be an Array');
       return;
@@ -201,7 +204,7 @@ class App extends Component {
       return;
     }
 
-    this.socket.emit('findnodes', { query: query, collections: co }, (data) => {
+    this.socket.emit('findnodes', { query: query, collections: co, count: count, pageNumber: pageNumber }, (data) => {
       if(!data || data.length <= 0) {
         this.setState({ nodes: [] });
       }

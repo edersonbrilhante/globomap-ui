@@ -22,7 +22,8 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      query: ""
+      query: "",
+      pageNumber: 0
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -57,7 +58,12 @@ class Search extends Component {
     event.preventDefault();
     this.props.clearStage();
     this.props.clearCurrent();
-    this.props.findNodes(this.state.query, this.props.enabledCollections);
+
+    let count = Math.ceil(2 / this.props.enabledCollections.length);
+    let pageNumber = this.state.pageNumber + 1;
+
+    this.props.findNodes(this.state.query, this.props.enabledCollections, count, this.state.pageNumber);
+    this.setState({ pageNumber: pageNumber });
   }
 
 }

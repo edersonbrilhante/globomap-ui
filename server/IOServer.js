@@ -82,12 +82,17 @@ class IOServer {
   }
 
   findNodes(data, fn) {
-    let { query, collections } = data;
+    // let { query, collections } = data;
+    let { query, collections, count, pageNumber } = data;
     let urlList = [];
-    let count = Math.ceil(50 / collections.length);
+    // let count = Math.ceil(50 / collections.length);
+    console.log(pageNumber);
+    let offset = pageNumber++ * count;
 
     for(let i=0, l=collections.length; i<l; ++i) {
-      let url = `${globomapApiUrl}/collections/${collections[i]}/search?field=name&value=${query}&count=${count}&offset=0`;
+      // let url = `${globomapApiUrl}/collections/${collections[i]}/search?field=name&value=${query}&count=${count}&offset=0`;
+      let url = `${globomapApiUrl}/collections/${collections[i]}/search?field=name&value=${query}&count=${count}&offset=${offset}`;
+      console.log(url);
       urlList.push(axios.get(url));
     }
 

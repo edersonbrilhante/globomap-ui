@@ -52,6 +52,7 @@ class App extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.clearStage = this.clearStage.bind(this);
     this.onToggleGraph = this.onToggleGraph.bind(this);
+    this.removeNode = this.removeNode.bind(this);
   }
 
   render() {
@@ -75,6 +76,7 @@ class App extends Component {
                stageNodes={this.state.stageNodes}
                currentNode={this.state.currentNode}
                clearCurrent={this.clearCurrent}
+               removeNode={this.removeNode}
                setCurrent={this.setCurrent} />
 
         <Info getNode={this.getNode}
@@ -120,7 +122,7 @@ class App extends Component {
     node.items = node.items || [];
     let currentNodes = this.state.stageNodes.slice();
 
-    if(parentUuid !== undefined) {
+    if(parentUuid) {
       traverseItems(currentNodes, (n) => {
         if(n.uuid === parentUuid) {
           n.items.push(node);
@@ -154,17 +156,6 @@ class App extends Component {
   }
 
   getNode(node, parentUuid) {
-    let nodes = this.state.nodes.slice();
-    let index = nodes.findIndex((n, i, arr) => {
-      return n.uuid
-              ? n.uuid === node.uuid
-              : n._id === node._id;
-    });
-
-    if(index >= 0) {
-      return nodes[index];
-    }
-
     let stageNodes = this.state.stageNodes.slice(),
         nodeFound = false;
 
@@ -187,6 +178,28 @@ class App extends Component {
     }
 
     return nodeFound;
+  }
+
+  removeNode(node) {
+    let stageNodes = this.state.stageNodes.slice();
+    let i = stageNodes.findIndex((n) => {
+        return n.uuid === node.uuid;
+    });
+
+    if (i >= 0) {
+      stageNodes.splice(i, 1);
+    } else {
+      traverseItems(stageNodes, (n) => {
+        let j = n.items.findIndex((n) => {
+          return n.uuid === node.uuid;
+        });
+        if (j >= 0) {
+          n.items.splice(j, 1);
+        }
+      });
+    }
+
+    this.setState({ stageNodes: stageNodes });
   }
 
   clearStage() {

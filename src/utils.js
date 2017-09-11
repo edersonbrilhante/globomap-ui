@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+const PAGE_SIZE = 15;
+
 function traverseItems(nList, fn) {
   for (let i in nList) {
     let node = nList[i];
@@ -58,8 +60,13 @@ function sortByName(arr) {
   return arrCopy;
 }
 
+function pageSize() {
+  return PAGE_SIZE;
+}
+
 module.exports = {
   traverseItems,
   uuid,
-  sortByName
+  sortByName,
+  pageSize
 };

@@ -18,7 +18,6 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import Header from './Header';
 import SearchContent from './SearchContent';
-import Pagination from './Pagination';
 import Stage from './Stage';
 import Info from './Info';
 import { traverseItems, uuid, sortByName } from '../utils';
@@ -39,7 +38,10 @@ class App extends Component {
       graphs: [],
       collections: [],
       nodes: [],
-      stageNodes: []
+      stageNodes: [],
+      pageNumber: 0,
+      enabledCollections: [],
+      query: ""
     };
 
     this.findNodes = this.findNodes.bind(this);
@@ -53,6 +55,9 @@ class App extends Component {
     this.clearStage = this.clearStage.bind(this);
     this.onToggleGraph = this.onToggleGraph.bind(this);
     this.removeNode = this.removeNode.bind(this);
+    this.setPageNumber = this.setPageNumber.bind(this);
+    this.setEnabledCollections = this.setEnabledCollections.bind(this);
+    this.setAppState = this.setAppState.bind(this);
   }
 
   render() {
@@ -63,14 +68,25 @@ class App extends Component {
                 clearCurrent={this.clearCurrent}
                 collections={this.state.collections}
                 findNodes={this.findNodes}
-                onToggleGraph={this.onToggleGraph} />
+                onToggleGraph={this.onToggleGraph}
+                setPageNumber={this.setPageNumber}
+                enabledCollections={this.state.enabledCollections}
+                setEnabledCollections={this.setEnabledCollections}
+                setAppState={this.setAppState}
+                query={this.state.query} />
 
         <SearchContent nodes={this.state.nodes}
                        setCurrent={this.setCurrent}
                        addNodeToStage={this.addNodeToStage}
-                       currentNode={this.state.currentNode} />
-
-        <Pagination />
+                       currentNode={this.state.currentNode}
+                       clearStage={this.clearStage}
+                       clearCurrent={this.clearCurrent}
+                       findNodes={this.findNodes}
+                       pageNumber={this.state.pageNumber}
+                       setPageNumber={this.setPageNumber}
+                       enabledCollections={this.state.enabledCollections}
+                       query={this.state.query}
+                       nodes={this.state.nodes} />
 
         <Stage graphs={this.state.graphs}
                stageNodes={this.state.stageNodes}
@@ -206,7 +222,7 @@ class App extends Component {
     return this.setState({ stageNodes: [] });
   }
 
-  findNodes(query, co, count, pageNumber) {
+  findNodes(query, co, count, pageNumber, fn) {
     if(co !== undefined && !co instanceof Array)  {
       console.log('The 2nd argument must be an Array');
       return;
@@ -219,11 +235,26 @@ class App extends Component {
 
     this.socket.emit('findnodes', { query: query, collections: co, count: count, pageNumber: pageNumber }, (data) => {
       if(!data || data.length <= 0) {
-        this.setState({ nodes: [] });
+        fn(data);
+        return;
       }
 
-      this.setState({ nodes: data });
+      this.setState({ nodes: data }, () => {
+        fn(data);
+      });
     });
+  }
+
+  setPageNumber(pageNumber) {
+    this.setState({ pageNumber: pageNumber });
+  }
+
+  setEnabledCollections(enabledCollections) {
+    this.setState({ enabledCollections: enabledCollections });
+  }
+
+  setAppState(dict) {
+    this.setState(dict);
   }
 
   setCurrent(node, fn) {

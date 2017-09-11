@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import Pagination from './Pagination';
+import { pageSize } from '../utils';
 import './css/SearchContent.css';
 
 class SearchContent extends Component {
@@ -25,13 +27,17 @@ class SearchContent extends Component {
   }
 
   render() {
+    let count = Math.ceil(pageSize() / this.props.enabledCollections.length);
+    let pageNumber = this.props.pageNumber;
+    let offset = pageNumber++ * count;
+
     let allNodes = this.props.nodes.map((node, i) => {
       let current = (this.props.currentNode &&
                      node._id === this.props.currentNode._id);
 
       return <tr key={node._id} className={current ? 'current' : ''}
                  onClick={(e) => this.onNodeSelect(e, node)}>
-              <td>{i + 1}</td>
+              <td>{offset + ++i}</td>
               <td>{node.type}</td>
               <td>{node.name}</td>
              </tr>;
@@ -49,6 +55,15 @@ class SearchContent extends Component {
                 </thead>
                 <tbody>{allNodes}</tbody>
               </table>}
+              <Pagination
+                clearStage={this.props.clearStage}
+                clearCurrent={this.props.clearCurrent}
+                findNodes={this.props.findNodes}
+                pageNumber={this.props.pageNumber}
+                setPageNumber={this.props.setPageNumber}
+                enabledCollections={this.props.enabledCollections}
+                query={this.props.query}
+                nodes={this.props.nodes} />
            </div>;
   }
 

@@ -22,9 +22,6 @@ class Header extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      enabledCollections: []
-    };
 
     this.handleCheckItem = this.handleCheckItem.bind(this);
   }
@@ -42,7 +39,7 @@ class Header extends Component {
 
     let collectionItems = this.props.collections.map((co) => {
       return <label key={co} className="item topcoat-checkbox">
-              <input type="checkbox" name={co} checked={this.state.enabledCollections.includes(co)}
+              <input type="checkbox" name={co} checked={this.props.enabledCollections.includes(co)}
                 onChange={this.handleCheckItem} />
               <div className="topcoat-checkbox__checkmark"></div>
               &nbsp;{co}
@@ -55,7 +52,10 @@ class Header extends Component {
               <Search findNodes={this.props.findNodes}
                       clearStage={this.props.clearStage}
                       clearCurrent={this.props.clearCurrent}
-                      enabledCollections={this.state.enabledCollections} />
+                      enabledCollections={this.props.enabledCollections}
+                      setPageNumber={this.props.setPageNumber}
+                      setAppState={this.props.setAppState}
+                      query={this.props.query} />
             </div>
             <div className="header-sub-group">
               <div className="graph-buttons">
@@ -70,7 +70,7 @@ class Header extends Component {
 
   handleCheckItem(event) {
     let target = event.target,
-        colls = this.state.enabledCollections.slice(),
+        colls = this.props.enabledCollections.slice(),
         itemIndex = colls.indexOf(target.name);
 
     if(itemIndex < 0) {
@@ -79,7 +79,7 @@ class Header extends Component {
       colls.splice(itemIndex, 1);
     }
 
-    this.setState({ enabledCollections: colls });
+    this.props.setEnabledCollections(colls);
   }
 }
 

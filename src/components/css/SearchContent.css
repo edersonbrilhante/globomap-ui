@@ -25,6 +25,9 @@ limitations under the License.
   left: 0;
   bottom: 0;
   overflow: auto;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .search-content table {

@@ -15,16 +15,13 @@ limitations under the License.
 */
 
 import React, { Component } from 'react';
+import { pageSize } from '../utils';
 import './css/Search.css';
 
 class Search extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      query: "",
-      pageNumber: 0
-    };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -35,8 +32,8 @@ class Search extends Component {
     return (
       <div className="search-box">
         <input className="topcoat-text-input--large" type="search" name="query"
-          value={this.state.query} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
-        <button className="btn-search topcoat-button--large" onClick={this.onSendSearchQuery}>Search</button>
+          value={this.props.query} onChange={this.handleInputChange} onKeyPress={this.handleKeyPress} />
+        <button className="btn-search topcoat-button--large" onClick={(event) => this.onSendSearchQuery(event)}>Search</button>
       </div>
     );
   }
@@ -44,7 +41,7 @@ class Search extends Component {
   handleInputChange(event) {
     let target = event.target;
     let value = target.type === 'checkbox' ? target.checked : target.value;
-    this.setState({ [target.name]: value });
+    this.props.setAppState({ [target.name]: value });
   }
 
   handleKeyPress(event) {
@@ -54,16 +51,15 @@ class Search extends Component {
     }
   };
 
-  onSendSearchQuery(event) {
+  onSendSearchQuery(event, direction) {
     event.preventDefault();
     this.props.clearStage();
     this.props.clearCurrent();
 
-    let count = Math.ceil(2 / this.props.enabledCollections.length);
-    let pageNumber = this.state.pageNumber + 1;
+    let count = Math.ceil(pageSize() / this.props.enabledCollections.length);
 
-    this.props.findNodes(this.state.query, this.props.enabledCollections, count, this.state.pageNumber);
-    this.setState({ pageNumber: pageNumber });
+    this.props.findNodes(this.props.query, this.props.enabledCollections, count, 0, () => {});
+    this.props.setPageNumber(0);
   }
 
 }

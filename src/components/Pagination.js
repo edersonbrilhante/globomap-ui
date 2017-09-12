@@ -24,7 +24,7 @@ class Pagination extends Component {
     super(props);
 
     this.state = {
-      pageNumber: 0,
+      pageNumber: 1,
       nodes: []
     };
 
@@ -35,22 +35,37 @@ class Pagination extends Component {
 
   onSendSearchQuery(event, direction) {
     let count = Math.ceil(pageSize() / this.props.enabledCollections.length);
-    let pageNumber = this.state.pageNumber;
+    let pageNumberView = this.state.pageNumber;
+    let pageNumber = 0;
+
+    if (String(pageNumberView).trim() === '') {
+      return;
+    }
 
     event.preventDefault();
     this.props.clearStage();
     this.props.clearCurrent();
 
     if (direction === 'next') {
-      pageNumber++
-    } else if (pageNumber > 0) {
-      pageNumber--
+      pageNumberView++
+      pageNumber = pageNumberView - 1;
+    } else if (direction === 'previous' && pageNumberView > 1) {
+      pageNumberView--
+      pageNumber = pageNumberView - 1;
     }
 
     this.props.findNodes(this.props.query, this.props.enabledCollections, count, pageNumber, (data) => {
-      this.setState({ nodes: data }, (data) => {
+      if (data.length === 0) {
+        return;
+      }
+      this.setState({ nodes: data }, () => {
+        let nodesLength = this.state.nodes.length;
+
+        if (nodesLength <= 0) {
+          return;
+        }
         if (this.state.nodes.length > 0) {
-          this.setState({ pageNumber });
+          this.setState({ pageNumber: pageNumberView });
         }
       });
     });
@@ -64,7 +79,7 @@ class Pagination extends Component {
       return;
     }
 
-    pageNumber = parseInt(event.target.value) || 1;
+    pageNumber = parseInt(event.target.value, 10) || 1;
     this.setState({ pageNumber });
   }
 
@@ -76,7 +91,7 @@ class Pagination extends Component {
     event.preventDefault();
 
     let count = Math.ceil(pageSize() / this.props.enabledCollections.length);
-    let pageNumber = parseInt(event.target.value) || 1;
+    let pageNumber = parseInt(event.target.value, 10) || 1;
     pageNumber--;
     this.props.findNodes(this.props.query, this.props.enabledCollections, count, pageNumber, (data) => {
       this.setState({ nodes: data }, (data) => {
@@ -88,14 +103,8 @@ class Pagination extends Component {
   }
 
   render() {
-    let pageNumber = this.state.pageNumber;
-
-    if (pageNumber === 0) {
-      pageNumber++;
-    }
-
-    if (pageNumber === '') {
-      pageNumber = 1;
+    if (this.props.nodes.length === 0) {
+      return null;
     }
 
     return (
@@ -108,7 +117,7 @@ class Pagination extends Component {
           name="pagination"
           onChange={this.handleInputChange}
           onKeyPress={this.handleKeyPress}
-          value={pageNumber} />
+          value={this.state.pageNumber} />
         <span onClick={(e) => this.onSendSearchQuery(e, 'next')}>
           <i className="icon-right fa fa-caret-right"></i>
         </span>

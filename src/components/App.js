@@ -85,8 +85,7 @@ class App extends Component {
                        pageNumber={this.state.pageNumber}
                        setPageNumber={this.setPageNumber}
                        enabledCollections={this.state.enabledCollections}
-                       query={this.state.query}
-                       nodes={this.state.nodes} />
+                       query={this.state.query} />
 
         <Stage graphs={this.state.graphs}
                stageNodes={this.state.stageNodes}

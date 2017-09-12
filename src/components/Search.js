@@ -60,6 +60,7 @@ class Search extends Component {
 
     this.props.findNodes(this.props.query, this.props.enabledCollections, count, 0, () => {});
     this.props.setPageNumber(0);
+    this.props.searchContent.pagination.setPageNumber(1);
   }
 
 }

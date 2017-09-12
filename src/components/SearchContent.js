@@ -27,7 +27,8 @@ class SearchContent extends Component {
   }
 
   render() {
-    let count = Math.ceil(pageSize() / this.props.enabledCollections.length);
+    let enCollections = this.props.enabledCollections;
+    let count = Math.ceil(pageSize() / (enCollections.length === 0 ? 1 : enCollections.length));
     let pageNumber = this.props.pageNumber;
     let offset = pageNumber++ * count;
 
@@ -56,6 +57,7 @@ class SearchContent extends Component {
                 <tbody>{allNodes}</tbody>
               </table>}
               <Pagination
+                ref={(pagination) => {this.pagination = pagination}}
                 clearStage={this.props.clearStage}
                 clearCurrent={this.props.clearCurrent}
                 findNodes={this.props.findNodes}

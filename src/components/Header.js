@@ -55,7 +55,8 @@ class Header extends Component {
                       enabledCollections={this.props.enabledCollections}
                       setPageNumber={this.props.setPageNumber}
                       setAppState={this.props.setAppState}
-                      query={this.props.query} />
+                      query={this.props.query}
+                      searchContent={this.props.searchContent} />
             </div>
             <div className="header-sub-group">
               <div className="graph-buttons">

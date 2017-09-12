@@ -73,9 +73,11 @@ class App extends Component {
                 enabledCollections={this.state.enabledCollections}
                 setEnabledCollections={this.setEnabledCollections}
                 setAppState={this.setAppState}
-                query={this.state.query} />
+                query={this.state.query}
+                searchContent={this.searchContent} />
 
-        <SearchContent nodes={this.state.nodes}
+        <SearchContent ref={(searchContent) => {this.searchContent = searchContent}}
+                       nodes={this.state.nodes}
                        setCurrent={this.setCurrent}
                        addNodeToStage={this.addNodeToStage}
                        currentNode={this.state.currentNode}

@@ -31,6 +31,11 @@ class Pagination extends Component {
     this.onSendSearchQuery = this.onSendSearchQuery.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.setPageNumber = this.setPageNumber.bind(this);
+  }
+
+  setPageNumber(pageNumber) {
+    this.setState({pageNumber: pageNumber})
   }
 
   onSendSearchQuery(event, direction) {
@@ -66,6 +71,7 @@ class Pagination extends Component {
         }
         if (this.state.nodes.length > 0) {
           this.setState({ pageNumber: pageNumberView });
+          this.props.setPageNumber(pageNumber);
         }
       });
     });
